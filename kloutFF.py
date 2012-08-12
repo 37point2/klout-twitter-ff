@@ -70,11 +70,20 @@ class User:
       self.monthChange = 0
       self.weekChange = 0
 
+  def setScore(self, var):
+    self.score = 0
+    self.dayChange = 0
+    self.monthChange = 0
+    self.weekChange = 0
+
   def getTopics(self):
     temp = Kapi.topics(self.id)
     self.topics = []
     for each in temp:
       self.topics.append(each['name'])
+
+  def setTopics(self):
+    self.topics = []
 
   def setRanking(self, val):
     self.ranking = val
@@ -265,20 +274,23 @@ def main():
   users = []
   platform = 'twitter'
 
-  for each in userFriends[:5]:
+  for each in userFriends:
 #Klout returns 404 occasionally, haven't looked into why yet
 #if 404 return, skip user
     try:
       temp = User(each, platform)
       users.append(temp)
-      if not users[users.indexof(temp)].id:
-        users[users.indexof(temp)].pop()
     except:
       pass
 
   for each in users:
-    each.getTopics()
-    each.getScore()
+    if hasattr(each, 'id'):
+      each.getTopics()
+      each.getScore()
+    else:
+      each.setScore(0)
+      each.setTopics()
+      print each.name + " has no id attribute.\n"
 
 #ranking for #FF = Interactions * Klout score^2
 #later version will factor in interactions with topics to score for #FF
@@ -286,9 +298,17 @@ def main():
   for each in users:
     val = math.pow(each.score, 2) * interactions[each.name]
     each.setRanking(val)
+#    print each.name, each.ranking
+
+#print out users with ranking from high to low
+
+  users.sort(key = lambda x: x.ranking, reverse=True)
+
+  for each in users:
     print each.name, each.ranking
 
 #build tweets, 3 tweets - 140 chars or less
+#possibly use topics to develop tweets in future version
 
 #post tweets
 
