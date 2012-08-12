@@ -310,7 +310,24 @@ def main():
 #build tweets, 3 tweets - 140 chars or less
 #possibly use topics to develop tweets in future version
 
+  tweets = []
+  y = 0
+
+  for x in range(0,3):
+    tweets.append("#FF ")
+    if len(tweets[x]) < 140:
+      flag = True
+    while flag:
+      if len(tweets[x]) + len(users[y].name) +2 < 140:
+        tweets[x] = tweets[x] + " @" + users[y].name
+        y += 1
+      else:
+        flag = False
+
 #post tweets
+
+  for each in tweets:
+    print each
 
 
 if __name__ == '__main__':
