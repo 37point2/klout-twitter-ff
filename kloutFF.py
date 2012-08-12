@@ -314,7 +314,7 @@ def main():
   y = 0
 
   for x in range(0,3):
-    tweets.append("#FF ")
+    tweets.append("#FF")
     if len(tweets[x]) < 140:
       flag = True
     while flag:
