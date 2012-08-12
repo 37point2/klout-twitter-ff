@@ -25,3 +25,5 @@ Factor in interactions with Topics to #FF score
 Implement time cutoff for timeline, possibly 1 month
 
 Fix number of tweets to retrieve, currently grabbing 1000 only
+
+Implement check for ranking when building Tweets, if 0 - stop appending
