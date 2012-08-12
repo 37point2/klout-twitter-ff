@@ -4,6 +4,8 @@ import tweepy
 import pyklout
 import json
 import sys
+import types
+import time
 
 #get API keys from file
 
@@ -61,11 +63,93 @@ class User:
     for each in temp:
       self.topics.append(each['name'])
 
+#needs to be cleaned up, copy/pasted from previous utility
 
+#get user timeline
+#num = number of tweets to grab
+
+def getTweets(user, num, api):
+  tweetsRecv = 0
+  tempTweets = []
+  pageNum = 1
+  numTweets = 0
+
+#check total number of tweets and adjust num total tweets is less than num
+
+  while numTweets == 0:
+    try:
+      numTweets = api.get_user(user).statuses_count
+    except tweepy.error.TweepError as e:
+      print e
+      if e.response.status == 400:
+        resetTime = api.rate_limit_status()['reset_time_in_seconds']
+        sleepTimer(resetTime - time.time() + 60)
+        continue
+      if e.response.status == 503:
+        continue
+      if e.response.status == 404:
+        break
+
+  if num > numTweets:
+    num = numTweets
+
+#grab tweets 200 at a time until reached num
+
+  while num > tweetsRecv:
+
+    if (tweetsRecv + 200) > num:
+      tempNum = num
+      tweetsRecv += 200
+    else:
+      tempNum = 200
+      tweetsRecv += 200
+
+    try:
+      [tempTweets.append(each) for each in api.user_timeline(user, page=pageNum, count=tempNum, include_entities='true', include_rts='true')]
+      print user + ": " + str(pageNum)
+      pageNum += 1
+      print str(tweetsRecv) + ", " + str(num) + ", " + str(tempNum)
+      print len(tempTweets)
+    except tweepy.error.TweepError as e:
+      print e
+      if isinstance(e, types.NoneType):
+        continue
+        pageNum -= 1
+        tweetsRecv -= 200
+      if e.response.status == 400:
+        resetTime = api.rate_limit_status()['reset_time_in_seconds']
+        sleepTimer(resetTime - time.time() + 60)
+        continue
+      if e.response.status == 503:
+        continue
+      if e.response.status == 404:
+        break
+
+  return tempTweets
+
+def sleepTimer(seconds):
+  while (seconds > 0):
+    print seconds/60
+    time.sleep(60)
+    seconds -= 60
+
+#done copy/paste
 
 def main():
 
+#get user name and number of tweets to grab
   userName = sys.argv[1]
+  num = sys.argv[2]
+
+  if userName and num:
+    pass
+  else:
+    print "kloutFF.py <username> <number of tweets to grab>"
+    sys.exit()
+
+  userTimeline = []
+
+  [userTimeline.append(each) for each in getTweets(userName, num, api)]
 
 
 if __name__ == '__main__':
