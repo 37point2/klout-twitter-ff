@@ -148,7 +148,7 @@ def main():
 
   userTimeline = []
 
-  [userTimeline.append(each) for each in getTweets(userName, num, api)]
+  [userTimeline.append(each) for each in getTweets(userName, num, Tapi)]
 
 
 if __name__ == '__main__':

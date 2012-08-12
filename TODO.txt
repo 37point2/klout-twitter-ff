@@ -1,6 +1,8 @@
 TODO
 
-Get User's Timeline
+#Get User's Timeline
+
+Get User's Friends
 
 Get Klout Scores and Topics
 
