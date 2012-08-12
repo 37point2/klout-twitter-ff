@@ -13,3 +13,5 @@ Determine who to #FF
 Build Tweets
 
 Post Tweets
+
+Implement threading for quicker execution
