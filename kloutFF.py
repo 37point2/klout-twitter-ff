@@ -133,6 +133,72 @@ def sleepTimer(seconds):
     time.sleep(60)
     seconds -= 60
 
+def getFriends(user, api):
+  i = 0
+  index = -1
+  flag = True
+  tempFriends = []
+  friendIDS = []
+  frCount = api.get_user(user).friends_count
+  print frCount
+  try:
+    temp = tweepy.Cursor(api.friends_ids, screen_name=user).pages()
+    while(flag):
+      if temp.next_cursor == 0:
+        flag = False
+      else:
+        try:
+          [friendIDS.append(each) for each in temp.next()]
+        except StopIteration as e:
+          print e
+          flag = False
+          continue
+  except tweepy.error.TweepError as e:
+    print e
+    if e.response.status == 400:
+      resetTime = api.rate_limit_status()['reset_time_in_seconds']
+      sleepTimer(resetTime - time.time() + 60)
+    if e.response.status == 401:
+      print 'response = 401'
+    if e.response.status == 503:
+      print 'response = 503'
+    if e.response.status == 404:
+      print 'break'
+    else:
+      print 'exit'
+  print frCount
+  while (i < frCount):
+    try:
+      temp = friendIDS[i:i+100]
+      [tempFriends.append(each.screen_name) for each in api.lookup_users(temp)]
+      i += 100
+      print frCount - i
+    except tweepy.error.TweepError as e:
+      print e
+      if e is None:
+        continue
+      if e.response is None:
+        continue
+      if e.response.status == 400:
+        resetTime = api.rate_limit_status()['reset_time_in_seconds']
+        sleepTimer(resetTime - time.time() + 60)
+        i -= 100
+        continue
+      if e.response.status == 401:
+        continue
+      if e.response.status == 503:
+        i -= 100
+        continue
+      if e.response.status == 404:
+        break
+      else:
+        return tempFriends
+    except StopIteration as e:
+      continue
+#  print tempFriends
+#  f = open('temporaryFile', 'w').write('\n'.join([str(each) for each in tempFriends]))
+  return tempFriends
+
 #done copy/paste
 
 def main():
@@ -146,9 +212,30 @@ def main():
     print "kloutFF.py <username> <number of tweets to grab>"
     sys.exit()
 
+#get user's timeline
   userTimeline = []
 
   [userTimeline.append(each) for each in getTweets(userName, num, Tapi)]
+
+  print len(userTimeline)
+
+#get user's friends
+  userFriends = []
+
+  [userFriends.append(each) for each in getFriends(userName, Tapi)]
+
+  print len(userFriends)
+
+#determine the number of interactions for each user in userTimeline
+
+#determine Klout score, topics for each in userFriends
+
+#ranking for #FF = Interactions * Klout score^2
+#later version will factor in interactions with topics to score for #FF
+
+#build tweets, 3 tweets - 140 chars or less
+
+#post tweets
 
 
 if __name__ == '__main__':
