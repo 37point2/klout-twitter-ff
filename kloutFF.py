@@ -3,6 +3,7 @@
 import tweepy
 import pyklout
 import json
+import sys
 
 #get API keys from file
 
@@ -40,10 +41,31 @@ class User:
 
     print self.name, self.platform
 
-  def influences(self)
-    temp = Kapi.influences(self.id)
-    self.myInfluencersCount = temp['myInfluencersCount']
+#needs work
 
+#  def getInfluences(self):
+#    temp = Kapi.influences(self.id)
+#    self.myInfluencersCount = temp['myInfluencersCount']
+#    self.myInfluenceesCount = temp['myInfluenceesCount']
+
+  def getScore(self):
+    temp = Kapi.score(self.id)
+    self.score = temp['score']
+    self.dayChange = temp['scoreDelta']['dayChange']
+    self.monthChange = temp['scoreDelta']['monthChange']
+    self.weekChange = temp['scoreDelta']['weekChange']
+
+  def getTopics(self):
+    temp = Kapi.topics(self.id)
+    self.topics = []
+    for each in temp:
+      self.topics.append(each['name'])
+
+
+
+def main():
+
+  userName = sys.argv[1]
 
 
 if __name__ == '__main__':
