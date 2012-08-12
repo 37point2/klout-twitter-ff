@@ -12,7 +12,7 @@ Determine who to #FF
 
 #	Interactions - Retweets/Replies/Favorites
 
-Build Tweets - possibly by Klout topics
+Build Tweets - possibly by Klout topics, alphabetize users
 
 Post Tweets
 
