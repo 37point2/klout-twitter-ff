@@ -38,8 +38,13 @@ class User:
   def __init__(self, name, platform):
     self.name = name
     self.platform = platform
-    self.id = Kapi.identity(name, platform)['id']
-    User.numUsers += 1
+#Klout returns 404 occasionally
+#if 404, skip user
+    try:
+      self.id = Kapi.identity(name, platform)['id']
+      User.numUsers += 1
+    except:
+      pass
 
     print self.name, self.platform
 
@@ -227,8 +232,42 @@ def main():
   print len(userFriends)
 
 #determine the number of interactions for each user in userTimeline
+#also add all the users in userFriends to interactions{} with value zero
+#TODO Implement time cutoff, possibly 1 month
+
+  interactions = {}
+
+  for each in userFriends:
+    interactions[str(each)] = 0
+
+  for each in userTimeline:
+    for x in range(0,len(each.entities['user_mentions'])):
+      try:
+        interactions[str(each.entities['user_mentions'][x]['screen_name'])] += 1
+      except:
+        interactions[str(each.entities['user_mentions'][x]['screen_name'])] = 1
+
+  print len(interactions)
 
 #determine Klout score, topics for each in userFriends
+
+  users = []
+  platform = 'twitter'
+
+  for each in userFriends:
+#Klout returns 404 occasionally, haven't looked into why yet
+#if 404 return, skip user
+    try:
+      temp = User(each, platform)
+      users.append(temp)
+      if not temp.id:
+        users.pop(temp)
+    except:
+      pass
+
+  for each in users:
+    each.getTopics()
+    each.getScore()
 
 #ranking for #FF = Interactions * Klout score^2
 #later version will factor in interactions with topics to score for #FF
