@@ -6,6 +6,7 @@ import json
 import sys
 import types
 import time
+import math
 
 #get API keys from file
 
@@ -57,16 +58,26 @@ class User:
 
   def getScore(self):
     temp = Kapi.score(self.id)
+    print temp
     self.score = temp['score']
-    self.dayChange = temp['scoreDelta']['dayChange']
-    self.monthChange = temp['scoreDelta']['monthChange']
-    self.weekChange = temp['scoreDelta']['weekChange']
+#Klout doesn't always return scoreDelta
+    try:
+      self.dayChange = temp['scoreDelta']['dayChange']
+      self.monthChange = temp['scoreDelta']['monthChange']
+      self.weekChange = temp['scoreDelta']['weekChange']
+    except:
+      self.dayChange = 0
+      self.monthChange = 0
+      self.weekChange = 0
 
   def getTopics(self):
     temp = Kapi.topics(self.id)
     self.topics = []
     for each in temp:
       self.topics.append(each['name'])
+
+  def setRanking(self, val):
+    self.ranking = val
 
 #needs to be cleaned up, copy/pasted from previous utility
 
@@ -254,14 +265,14 @@ def main():
   users = []
   platform = 'twitter'
 
-  for each in userFriends:
+  for each in userFriends[:5]:
 #Klout returns 404 occasionally, haven't looked into why yet
 #if 404 return, skip user
     try:
       temp = User(each, platform)
       users.append(temp)
-      if not temp.id:
-        users.pop(temp)
+      if not users[users.indexof(temp)].id:
+        users[users.indexof(temp)].pop()
     except:
       pass
 
@@ -271,6 +282,11 @@ def main():
 
 #ranking for #FF = Interactions * Klout score^2
 #later version will factor in interactions with topics to score for #FF
+
+  for each in users:
+    val = math.pow(each.score, 2) * interactions[each.name]
+    each.setRanking(val)
+    print each.name, each.ranking
 
 #build tweets, 3 tweets - 140 chars or less
 
