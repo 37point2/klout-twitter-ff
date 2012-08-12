@@ -138,12 +138,11 @@ def sleepTimer(seconds):
 def main():
 
 #get user name and number of tweets to grab
-  userName = sys.argv[1]
-  num = sys.argv[2]
 
-  if userName and num:
-    pass
-  else:
+  try:
+    userName = sys.argv[1]
+    num = sys.argv[2]
+  except:
     print "kloutFF.py <username> <number of tweets to grab>"
     sys.exit()
 
