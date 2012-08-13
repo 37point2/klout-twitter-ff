@@ -1,29 +1,11 @@
 TODO
 
-#Get User's Timeline
-
-#Get User's Friends
-
-#Get Klout Scores and Topics
-
-Determine who to #FF
-
-	Clustering based on Klout topics
-
-#	Interactions - Retweets/Replies/Favorites
-
-Build Tweets - possibly by Klout topics, alphabetize users
-
-Post Tweets
+Clustering based on Klout topics
 
 Implement threading for quicker execution
-
-Figure out why Klout 404s
 
 Factor in interactions with Topics to #FF score
 
 Implement time cutoff for timeline, possibly 1 month
-
-Fix number of tweets to retrieve, currently grabbing 1000 only
 
 Implement check for ranking when building Tweets, if 0 - stop appending
