@@ -231,8 +231,9 @@ def main():
 #get user name and number of tweets to grab
 
   try:
-    userName = sys.argv[1]
-    num = sys.argv[2]
+    userName = Tapi.me().screen_name
+    num = 1000
+    print userName, num
   except:
     print "kloutFF.py <username> <number of tweets to grab>"
     sys.exit()
@@ -300,12 +301,18 @@ def main():
     each.setRanking(val)
 #    print each.name, each.ranking
 
-#print out users with ranking from high to low
+#print out and write to file users with ranking from high to low
+
+  f = open('ranking.txt', 'w')
+  f.write("Name,Ranking\n")
 
   users.sort(key = lambda x: x.ranking, reverse=True)
 
   for each in users:
+    f.write(str(each.name) + "," + str(each.ranking) + "\n")
     print each.name, each.ranking
+
+  f.close()
 
 #build tweets, 3 tweets - 140 chars or less
 #possibly use topics to develop tweets in future version
