@@ -58,7 +58,7 @@ class User:
 
   def getScore(self):
     temp = Kapi.score(self.id)
-    print temp
+    print self.name, temp['score']
     self.score = temp['score']
 #Klout doesn't always return scoreDelta
     try:
