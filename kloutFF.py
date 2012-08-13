@@ -239,6 +239,7 @@ def main():
     sys.exit()
 
 #get user's timeline
+  print "Getting last 1000 Tweets\n"
   userTimeline = []
 
   [userTimeline.append(each) for each in getTweets(userName, num, Tapi)]
@@ -246,6 +247,7 @@ def main():
   print len(userTimeline)
 
 #get user's friends
+  print "Building a list of your Friends\n"
   userFriends = []
 
   [userFriends.append(each) for each in getFriends(userName, Tapi)]
@@ -271,7 +273,7 @@ def main():
   print len(interactions)
 
 #determine Klout score, topics for each in userFriends
-
+  print "Determining Klout score and topics\n"
   users = []
   platform = 'twitter'
 
@@ -295,14 +297,14 @@ def main():
 
 #ranking for #FF = Interactions * Klout score^2
 #later version will factor in interactions with topics to score for #FF
-
+  print "Ranking users\n"
   for each in users:
     val = math.pow(each.score, 2) * interactions[each.name]
     each.setRanking(val)
 #    print each.name, each.ranking
 
 #print out and write to file users with ranking from high to low
-
+  print "Sorting users and writing to file"
   f = open('ranking.txt', 'w')
   f.write("Name,Ranking\n")
 
@@ -315,8 +317,9 @@ def main():
   f.close()
 
 #build tweets, 3 tweets - 140 chars or less
+#alphabetize users per Tweet
 #possibly use topics to develop tweets in future version
-
+  print "Building Tweets for #FF"
   tweets = []
   y = 0
 
