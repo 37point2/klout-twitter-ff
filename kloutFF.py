@@ -323,6 +323,7 @@ def main():
   tweets = []
   y = 0
 
+#append names until next would append would make length of string > 140 chars
   for x in range(0,3):
     tweets.append("#FF")
     if len(tweets[x]) < 140:
@@ -334,7 +335,21 @@ def main():
       else:
         flag = False
 
+#alphabetize the names
+
+  for x in range(0, len(tweets)):
+    temp = []
+    [temp.append(each) for each in tweets[x].split()]
+    tweets[x] = (temp[0])
+    temp.sort(key=lambda var:var.lower())
+    for each in temp[1:]:
+      tweets[x] = tweets[x] + " " + each
+
 #post tweets
+
+#uncomment next two lines to post to Twitter
+#  for each in tweets:
+#    Tapi.update_status(each)
 
   for each in tweets:
     print each
