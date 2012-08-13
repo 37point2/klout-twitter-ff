@@ -231,10 +231,10 @@ def main():
 #get user name and number of tweets to grab
 
   try:
-    numberOfFFTweets = sys.argv[1]
+    numberOfFFTweets = int(sys.argv[1])
     userName = Tapi.me().screen_name
     num = 1000
-    print userName, num
+    print userName, num, numberOfFFTweets
   except:
     print "kloutFF.py <Number of #FF Tweets>"
     sys.exit()
