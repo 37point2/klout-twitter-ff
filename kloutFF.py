@@ -231,11 +231,12 @@ def main():
 #get user name and number of tweets to grab
 
   try:
+    numberOfFFTweets = sys.argv[1]
     userName = Tapi.me().screen_name
     num = 1000
     print userName, num
   except:
-    print "kloutFF.py <username> <number of tweets to grab>"
+    print "kloutFF.py <Number of #FF Tweets>"
     sys.exit()
 
 #get user's timeline
@@ -324,7 +325,7 @@ def main():
   y = 0
 
 #append names until next would append would make length of string > 140 chars
-  for x in range(0,3):
+  for x in range(0,numberOfFFTweets):
     tweets.append("#FF")
     if len(tweets[x]) < 140:
       flag = True
