@@ -263,10 +263,10 @@ def main():
     if len(tweets[x]) < 140:
       flag = True
     if y == len(users):
-      tweets[x].pop()
+      tweets.pop(x)
       break
     elif users[y].ranking == 0.0:
-      tweets[x].pop()
+      tweets.pop(x)
       break
     while flag:
       if y == len(users):
