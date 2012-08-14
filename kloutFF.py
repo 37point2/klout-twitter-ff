@@ -173,7 +173,7 @@ def main():
     sys.exit()
 
 #get user's timeline
-  print "Getting last 1000 Tweets\n"
+  print "\nGetting last 1000 Tweets\n"
   userTimeline = []
 
   [userTimeline.append(each) for each in getTweets(userName, num, Tapi)]
@@ -206,7 +206,7 @@ def main():
   print len(interactions)
 
 #determine Klout score, topics for each in interactions
-  print "Determining Klout score and topics\nThis may take awhile...\n"
+  print "\nDetermining Klout score and topics\nThis may take awhile...\n"
   users = []
   platform = 'twitter'
 
@@ -234,6 +234,7 @@ def main():
   for each in users:
     val = math.pow(each.score, 2) * interactions[each.name]
     each.setRanking(val)
+
 #    print each.name, each.ranking
 
 #print out and write to file users with ranking from high to low
@@ -261,12 +262,23 @@ def main():
     tweets.append("#FF")
     if len(tweets[x]) < 140:
       flag = True
+    if y == len(users):
+      tweets[x].pop()
+      break
+    elif users[y].ranking == 0.0:
+      tweets[x].pop()
+      break
     while flag:
-      if len(tweets[x]) + len(users[y].name) +2 < 140:
-        tweets[x] = tweets[x] + " @" + users[y].name
-        y += 1
-      else:
+      if y == len(users):
         flag = False
+      elif users[y].ranking == 0.0:
+        flag = False
+      else:
+        if len(tweets[x]) + len(users[y].name) +2 < 140:
+          tweets[x] = tweets[x] + " @" + users[y].name
+          y += 1
+        else:
+          flag = False
 
 #alphabetize the names
 
