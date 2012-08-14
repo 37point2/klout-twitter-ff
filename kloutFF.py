@@ -47,9 +47,8 @@ class User:
     except:
       pass
 
-    print self.name, self.platform
-
 #needs work
+#Possibly can use the number of Influencees or who people influence to determine better algorithm
 
 #  def getInfluences(self):
 #    temp = Kapi.influences(self.id)
@@ -158,72 +157,6 @@ def sleepTimer(seconds):
     time.sleep(60)
     seconds -= 60
 
-def getFriends(user, api):
-  i = 0
-  index = -1
-  flag = True
-  tempFriends = []
-  friendIDS = []
-  frCount = api.get_user(user).friends_count
-  print frCount
-  try:
-    temp = tweepy.Cursor(api.friends_ids, screen_name=user).pages()
-    while(flag):
-      if temp.next_cursor == 0:
-        flag = False
-      else:
-        try:
-          [friendIDS.append(each) for each in temp.next()]
-        except StopIteration as e:
-          print e
-          flag = False
-          continue
-  except tweepy.error.TweepError as e:
-    print e
-    if e.response.status == 400:
-      resetTime = api.rate_limit_status()['reset_time_in_seconds']
-      sleepTimer(resetTime - time.time() + 60)
-    if e.response.status == 401:
-      print 'response = 401'
-    if e.response.status == 503:
-      print 'response = 503'
-    if e.response.status == 404:
-      print 'break'
-    else:
-      print 'exit'
-  print frCount
-  while (i < frCount):
-    try:
-      temp = friendIDS[i:i+100]
-      [tempFriends.append(each.screen_name) for each in api.lookup_users(temp)]
-      i += 100
-      print frCount - i
-    except tweepy.error.TweepError as e:
-      print e
-      if e is None:
-        continue
-      if e.response is None:
-        continue
-      if e.response.status == 400:
-        resetTime = api.rate_limit_status()['reset_time_in_seconds']
-        sleepTimer(resetTime - time.time() + 60)
-        i -= 100
-        continue
-      if e.response.status == 401:
-        continue
-      if e.response.status == 503:
-        i -= 100
-        continue
-      if e.response.status == 404:
-        break
-      else:
-        return tempFriends
-    except StopIteration as e:
-      continue
-#  print tempFriends
-#  f = open('temporaryFile', 'w').write('\n'.join([str(each) for each in tempFriends]))
-  return tempFriends
-
 #done copy/paste
 
 def main():
@@ -247,38 +180,37 @@ def main():
 
   print len(userTimeline)
 
-#get user's friends
-  print "Building a list of your Friends\n"
-  userFriends = []
-
-  [userFriends.append(each) for each in getFriends(userName, Tapi)]
-
-  print len(userFriends)
-
 #determine the number of interactions for each user in userTimeline
-#also add all the users in userFriends to interactions{} with value zero
 #TODO Implement time cutoff, possibly 1 month
 
   interactions = {}
 
-  for each in userFriends:
-    interactions[str(each)] = 0
+#set cutoff to 30 days prior to current time
+
+  timeCutoff = time.time() - (3600*24*30)
 
   for each in userTimeline:
-    for x in range(0,len(each.entities['user_mentions'])):
-      try:
-        interactions[str(each.entities['user_mentions'][x]['screen_name'])] += 1
-      except:
-        interactions[str(each.entities['user_mentions'][x]['screen_name'])] = 1
+    if time.mktime(each.created_at.timetuple()) > timeCutoff:
+      for x in range(0,len(each.entities['user_mentions'])):
+        try:
+          interactions[str(each.entities['user_mentions'][x]['screen_name'])] += 1
+        except:
+          interactions[str(each.entities['user_mentions'][x]['screen_name'])] = 1
+    else:
+      pass
+
+#remove self from list
+
+  del interactions[userName]
 
   print len(interactions)
 
-#determine Klout score, topics for each in userFriends
-  print "Determining Klout score and topics\n"
+#determine Klout score, topics for each in interactions
+  print "Determining Klout score and topics\nThis may take awhile...\n"
   users = []
   platform = 'twitter'
 
-  for each in userFriends:
+  for each in interactions.keys():
 #Klout returns 404 occasionally, haven't looked into why yet
 #if 404 return, skip user
     try:
