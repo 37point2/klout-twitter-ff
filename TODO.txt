@@ -6,6 +6,4 @@ Implement threading for quicker execution
 
 Factor in interactions with Topics to #FF score
 
-Implement time cutoff for timeline, possibly 1 month
-
 Implement check for ranking when building Tweets, if 0 - stop appending
